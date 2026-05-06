@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastBridger — Spring Boot Starter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #faf8f5;
+      --bg2:       #f3f0eb;
+      --bg3:       #ece8e1;
+      --border:    rgba(0,0,0,0.08);
+      --border-md: rgba(0,0,0,0.13);
+      --spring:    #1a7a1a;
+      --spring-lt: #e8f5e8;
+      --fastapi:   #007a62;
+      --fastapi-lt:#e0f5f0;
+      --bridge:    #c27d0e;
+      --bridge-lt: #fef3db;
+      --text:      #2d2926;
+      --text-dim:  #7a7065;
+      --text-dimmer: #a89e93;
+      --white:     #ffffff;
+      --code-bg:   #1e1e2e;
+      --font-head: 'Playfair Display', Georgia, serif;
+      --font-body: 'Lora', Georgia, serif;
+      --font-code: 'DM Mono', 'Courier New', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(250,248,245,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-logo span { color: var(--bridge); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--text) !important;
+      color: var(--bg) !important;
+      padding: 0.4rem 1.1rem;
+      border-radius: 4px;
+      font-weight: 600 !important;
+    }
+
+    .nav-cta:hover { opacity: 0.8; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 9rem 2rem 5rem;
+      text-align: center;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 70% 60% at 20% 50%, rgba(26,122,26,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 60% at 80% 50%, rgba(0,122,98,0.06) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        transparent, transparent 47px,
+        rgba(0,0,0,0.04) 47px, rgba(0,0,0,0.04) 48px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 820px; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bridge-lt);
+      border: 1px solid rgba(194,125,14,0.3);
+      color: var(--bridge);
+      padding: 0.3rem 1rem;
+      border-radius: 100px;
+      font-family: var(--font-code);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 2.25rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--bridge);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.35; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      line-height: 1.08;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    h1 em { font-style: italic; color: var(--spring); }
+
+    .hero-sub {
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      max-width: 540px;
+      margin: 0 auto 2.75rem;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-sub strong { color: var(--text); font-weight: 600; }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--text);
+      color: var(--bg);
+      padding: 0.8rem 1.85rem;
+      border-radius: 5px;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(45,41,38,0.2);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--text);
+      padding: 0.8rem 1.85rem;
+      border-radius: 5px;
+      border: 1.5px solid var(--border-md);
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text);
+      background: rgba(0,0,0,0.03);
+    }
+
+    /* ── BRIDGE DIAGRAM ── */
+    .bridge-diagram {
+      position: relative;
+      z-index: 1;
+      margin-top: 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    .diagram-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .diagram-box {
+      padding: 0.65rem 1.1rem;
+      border-radius: 6px;
+      font-family: var(--font-code);
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1.5px solid;
+      white-space: nowrap;
+    }
+
+    .box-js     { background: #fffbea; border-color: #c9a800; color: #7a6100; }
+    .box-spring { background: var(--spring-lt); border-color: rgba(26,122,26,0.4); color: var(--spring); }
+    .box-bridge {
+      background: var(--bridge-lt);
+      border-color: rgba(194,125,14,0.5);
+      color: var(--bridge);
+      transform: scale(1.08);
+      box-shadow: 0 4px 16px rgba(194,125,14,0.15);
+    }
+    .box-fastapi { background: var(--fastapi-lt); border-color: rgba(0,122,98,0.4); color: var(--fastapi); }
+
+    .diagram-label {
+      font-family: var(--font-code);
+      font-size: 0.65rem;
+      color: var(--text-dimmer);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .diagram-arrow {
+      display: flex;
+      align-items: center;
+      padding: 0 0.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-dimmer);
+    }
+
+    .arrow-line { height: 1px; width: 48px; background: linear-gradient(90deg, var(--border), var(--border-md), var(--border)); }
+    .arrow-head { font-size: 0.8rem; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-code);
+      font-size: 0.72rem;
+      color: var(--bridge);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.85rem;
+    }
+
+    .section-label::before { content: '§'; color: var(--text-dimmer); }
+
+    h2 {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: clamp(1.9rem, 4vw, 2.9rem);
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    h2 em { font-style: italic; color: var(--spring); }
+
+    h3 {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-intro {
+      font-family: var(--font-body);
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      max-width: 560px;
+      margin-bottom: 3.5rem;
+      font-style: italic;
+    }
+
+    /* ── PROBLEM / SOLUTION ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+    .problem-card, .solution-card { padding: 2rem; border-radius: 8px; border: 1.5px solid; }
+    .problem-card  { background: #fff8f8; border-color: rgba(200,60,60,0.18); }
+    .problem-card h3 { color: #b03030; }
+    .solution-card { background: var(--spring-lt); border-color: rgba(26,122,26,0.2); }
+    .solution-card h3 { color: var(--spring); }
+
+    .ps-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+    .ps-list li { display: flex; align-items: flex-start; gap: 0.65rem; font-size: 0.9rem; color: var(--text-dim); font-family: var(--font-body); }
+    .ps-list li::before { flex-shrink: 0; margin-top: 0.15rem; font-size: 0.8rem; font-family: var(--font-code); }
+    .problem-card  .ps-list li::before { content: '✕'; color: #b03030; }
+    .solution-card .ps-list li::before { content: '✓'; color: var(--spring); }
+
+    /* ── FEATURE GRID ── */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+
+    .feature-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-md);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+      transform: translateY(-3px);
+    }
+
+    .feature-icon { font-size: 1.4rem; margin-bottom: 0.85rem; display: block; }
+    .feature-card p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.65; font-family: var(--font-body); }
+
+    .tag { display: inline-block; font-family: var(--font-code); font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 3px; margin-top: 1rem; letter-spacing: 0.04em; }
+    .tag-spring  { background: var(--spring-lt);  color: var(--spring);  border: 1px solid rgba(26,122,26,0.2); }
+    .tag-fastapi { background: var(--fastapi-lt); color: var(--fastapi); border: 1px solid rgba(0,122,98,0.2); }
+    .tag-perf    { background: var(--bridge-lt);  color: var(--bridge);  border: 1px solid rgba(194,125,14,0.2); }
+
+    /* ── INSTALL SECTION ── */
+    .install-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .tabs { display: flex; border-bottom: 1.5px solid var(--border); }
+    .tab-btn {
+      font-family: var(--font-code);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.2s, border-color 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .tab-btn.active { color: var(--bridge); border-bottom-color: var(--bridge); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .code-block { background: var(--code-bg); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 8px; overflow: hidden; margin-top: 1.5rem; }
+    .code-block-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .code-block-title { font-family: var(--font-code); font-size: 0.72rem; color: rgba(255,255,255,0.35); letter-spacing: 0.04em; }
+    .copy-btn { font-family: var(--font-code); font-size: 0.68rem; color: rgba(255,255,255,0.35); background: none; border: 1px solid rgba(255,255,255,0.12); padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+    .copy-btn:hover { color: rgba(255,255,255,0.75); border-color: rgba(255,255,255,0.3); }
+    .copy-btn.copied { color: #a6e3a1; border-color: #a6e3a1; }
+
+    pre { padding: 1.5rem; overflow-x: auto; font-family: var(--font-code); font-size: 0.85rem; line-height: 1.75; color: #cdd6f4; }
+
+    .kw { color: #cba6f7; }
+    .st { color: #a6e3a1; }
+    .cm { color: #585b70; font-style: italic; }
+    .cl { color: #89b4fa; }
+    .an { color: #fab387; }
+    .nu { color: #f38ba8; }
+    .op { color: #7f849c; }
+    .sp { color: #a6e3a1; }
+    .fa { color: #94e2d5; }
+    .br { color: #f9e2af; }
+
+    /* ── PERFORMANCE TABLE ── */
+    .perf-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1.5px solid var(--border-md);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 2.5rem;
+    }
+
+    .perf-cell {
+      background: var(--white);
+      padding: 1.5rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-body);
+    }
+
+    .perf-cell:nth-child(3n) { border-right: none; }
+    .perf-cell:nth-last-child(-n+3) { border-bottom: none; }
+    .perf-cell.header { background: var(--bg2); font-family: var(--font-code); font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+    .perf-value { font-family: var(--font-head); font-size: 1.8rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
+    .perf-label { font-size: 0.78rem; color: var(--text-dimmer); font-family: var(--font-code); }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; border: 1.5px solid var(--border-md); border-radius: 8px; overflow: hidden; margin-top: 2.5rem; }
+    .faq-item { border-bottom: 1px solid var(--border); background: var(--white); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      padding: 1.25rem 1.5rem; color: var(--text);
+      font-family: var(--font-head); font-size: 1rem; font-weight: 700;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      transition: background 0.2s;
+    }
+    .faq-q:hover { background: var(--bg2); }
+    .faq-chevron { flex-shrink: 0; color: var(--text-dimmer); transition: transform 0.3s; font-size: 0.7rem; font-family: var(--font-code); }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; padding: 0 1.5rem; color: var(--text-dim); font-size: 0.92rem; line-height: 1.75; font-family: var(--font-body); }
+    .faq-item.open .faq-a { max-height: 400px; padding: 0 1.5rem 1.25rem; }
+    .faq-a code { font-family: var(--font-code); font-size: 0.8rem; background: var(--bg2); padding: 0.1rem 0.35rem; border-radius: 3px; color: var(--fastapi); border: 1px solid var(--border); }
+
+    /* ── DIVIDER ── */
+    .section-divider { max-width: 1080px; margin: 0 auto; height: 1px; background: linear-gradient(90deg, transparent, var(--border-md), transparent); }
+
+    /* ── AUTHOR STRIP ── */
+    .author-strip { background: var(--bg2); border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); }
+    .author-inner { max-width: 1080px; margin: 0 auto; padding: 3.5rem 2rem; display: flex; align-items: center; gap: 2rem; }
+    .author-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 800; font-size: 1.3rem;
+      color: var(--bg); flex-shrink: 0; letter-spacing: -0.02em;
+    }
+    .author-info h3 { font-size: 1.15rem; margin-bottom: 0.2rem; }
+    .author-info p { font-size: 0.88rem; color: var(--text-dim); margin-bottom: 0.85rem; font-style: italic; }
+    .author-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--fastapi); text-decoration: none; font-size: 0.85rem; font-family: var(--font-code); transition: opacity 0.2s; margin-right: 1.25rem; }
+    .author-link:hover { opacity: 0.65; }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 2.5rem 2rem; border-top: 1px solid var(--border); background: var(--bg); }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-family: var(--font-code); font-size: 0.75rem; color: var(--text-dimmer); }
+    .footer-inner a { color: var(--text-dim); text-decoration: none; }
+    .footer-inner a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { display: none; }
+      .two-col { grid-template-columns: 1fr; }
+      .perf-grid { grid-template-columns: 1fr; }
+      .author-inner { flex-direction: column; text-align: center; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .arrow-line { width: 24px; }
+      section { padding: 4rem 1.25rem; }
+      h1 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Fast<span>Bridger</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="https://github.com/ramdev2025/fastbridger-spring-boot-starter" class="nav-cta">GitHub →</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">v1.0.0 · MIT License · Spring Boot 3.2+</div>
+    <h1>Stop the crashes.<br/><em>Bridge everything.</em></h1>
+    <p class="hero-sub">A Spring Boot starter that <strong>kills CORS errors</strong> for JavaScript frontends and gives you a <strong>typed, non-blocking FastAPI client</strong> — in two lines of config.</p>
+    <div class="hero-actions">
+      <a href="#install" class="btn-primary">Get Started →</a>
+      <a href="https://github.com/ramdev2025/fastbridger-spring-boot-starter" class="btn-secondary">★ View on GitHub</a>
+    </div>
+  </div>
+
+  <div class="bridge-diagram">
+    <div class="diagram-node">
+      <div class="diagram-box box-js">React / Vue / Angular</div>
+      <div class="diagram-label">JS Frontend</div>
+    </div>
+    <div class="diagram-arrow"><div class="arrow-line"></div><div class="arrow-head">›</div></div>
+    <div class="diagram-node">
+      <div class="diagram-box box-spring">Spring Boot</div>
+      <div class="diagram-label">Your Backend</div>
+    </div>
+    <div class="diagram-arrow"><div class="arrow-line"></div><div class="arrow-head">›</div></div>
+    <div class="diagram-node">
+      <div class="diagram-box box-bridge">⚡ FastBridger</div>
+      <div class="diagram-label">This Library</div>
+    </div>
+    <div class="diagram-arrow"><div class="arrow-line"></div><div class="arrow-head">›</div></div>
+    <div class="diagram-node">
+      <div class="diagram-box box-fastapi">FastAPI (Python)</div>
+      <div class="diagram-label">AI / ML Service</div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="section-label">The Problem</div>
+  <h2>Two pain points.<br/><em>One dependency.</em></h2>
+  <p class="section-intro">Every Spring Boot + JS stack eventually hits the same two walls. FastBridger tears them down.</p>
+  <div class="two-col">
+    <div class="problem-card">
+      <h3>Without FastBridger</h3>
+      <ul class="ps-list">
+        <li>CORS errors block your JS frontend before a single real request lands</li>
+        <li>Spring Security or MVC config silently drops CORS headers on some paths</li>
+        <li>Credentials + wildcard origin combination crashes the app at runtime</li>
+        <li>Calling FastAPI means writing boilerplate WebClient, retry, and error handling from scratch</li>
+        <li>RestTemplate blocks threads waiting for Python responses</li>
+      </ul>
+    </div>
+    <div class="solution-card">
+      <h3>With FastBridger</h3>
+      <ul class="ps-list">
+        <li>Dual-layer CORS — filter + MVC — so no request path slips through</li>
+        <li>Credentials + wildcard handled automatically with allowedOriginPatterns</li>
+        <li>All JS dev server ports pre-configured out of the box</li>
+        <li>Inject FastApiClient and call .get(), .post() — done</li>
+        <li>Non-blocking WebClient — threads never idle waiting for FastAPI</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="features">
+  <div class="section-label">Features</div>
+  <h2>Everything you need.<br/><em>Nothing you don't.</em></h2>
+  <p class="section-intro">Designed as a true Spring Boot starter — drop it in, set two lines, and move on.</p>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🛡️</span>
+      <h3>Dual-Layer CORS</h3>
+      <p>Registers both a CorsFilter at servlet level and a WebMvcConfigurer at handler level. Neither alone is enough — FastBridger uses both.</p>
+      <span class="tag tag-spring">Spring MVC</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <h3>Typed FastAPI Client</h3>
+      <p>Inject FastApiClient and call typed GET, POST, PUT, PATCH, DELETE — both blocking and reactive Mono/Flux variants included.</p>
+      <span class="tag tag-fastapi">WebClient</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔁</span>
+      <h3>Automatic Retry</h3>
+      <p>Exponential backoff on transient connection failures. Smart enough to skip 4xx/5xx — only retries real network blips.</p>
+      <span class="tag tag-perf">Resilience</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔑</span>
+      <h3>Auth Built-in</h3>
+      <p>Configure a Bearer token or API key in application.yml and every FastAPI request is authenticated automatically.</p>
+      <span class="tag tag-spring">Security</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">❤️</span>
+      <h3>Health Indicator</h3>
+      <p>Adds /actuator/health/fastapi automatically when Actuator is on the classpath. Know instantly if your Python service is down.</p>
+      <span class="tag tag-fastapi">Actuator</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚙️</span>
+      <h3>Zero Boilerplate</h3>
+      <p>Pure Spring Boot auto-configuration. Add the dependency, set your allowed origins and FastAPI URL. No @Bean methods required.</p>
+      <span class="tag tag-perf">Auto-Config</span>
+    </div>
+  </div>
+</section>
+
+<div class="install-section" id="install">
+  <section>
+    <div class="section-label">Installation</div>
+    <h2>Two steps to done.</h2>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(event,'maven')">Maven</button>
+      <button class="tab-btn" onclick="switchTab(event,'gradle')">Gradle (Kotlin)</button>
+      <button class="tab-btn" onclick="switchTab(event,'config')">application.yml</button>
+    </div>
+
+    <div id="tab-maven" class="tab-panel active">
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-block-title">pom.xml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="op">&lt;</span><span class="kw">dependency</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="kw">groupId</span><span class="op">&gt;</span><span class="fa">io.fastbridger</span><span class="op">&lt;/</span><span class="kw">groupId</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="kw">artifactId</span><span class="op">&gt;</span><span class="br">fastbridger-spring-boot-starter</span><span class="op">&lt;/</span><span class="kw">artifactId</span><span class="op">&gt;</span>
+    <span class="op">&lt;</span><span class="kw">version</span><span class="op">&gt;</span><span class="nu">1.0.0</span><span class="op">&lt;/</span><span class="kw">version</span><span class="op">&gt;</span>
+<span class="op">&lt;/</span><span class="kw">dependency</span><span class="op">&gt;</span></pre>
+      </div>
+    </div>
+
+    <div id="tab-gradle" class="tab-panel">
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-block-title">build.gradle.kts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cl">implementation</span><span class="op">(</span><span class="st">"io.fastbridger:fastbridger-spring-boot-starter:1.0.0"</span><span class="op">)</span></pre>
+      </div>
+    </div>
+
+    <div id="tab-config" class="tab-panel">
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-block-title">src/main/resources/application.yml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="sp">fastbridger</span><span class="op">:</span>
+  <span class="cm"># ── JS Frontend CORS ──────────────────────────</span>
+  <span class="sp">cors</span><span class="op">:</span>
+    <span class="sp">allowed-origins</span><span class="op">:</span>
+      <span class="op">-</span> <span class="st">"http://localhost:3000"</span>    <span class="cm"># React</span>
+      <span class="op">-</span> <span class="st">"http://localhost:5173"</span>    <span class="cm"># Vite</span>
+      <span class="op">-</span> <span class="st">"https://myapp.com"</span>        <span class="cm"># Production</span>
+
+  <span class="cm"># ── FastAPI Backend ────────────────────────────</span>
+  <span class="fa">fastapi</span><span class="op">:</span>
+    <span class="fa">base-url</span><span class="op">:</span> <span class="st">"http://localhost:8000"</span>
+    <span class="fa">timeout</span><span class="op">:</span> <span class="nu">10s</span>
+    <span class="fa">max-retries</span><span class="op">:</span> <span class="nu">3</span></pre>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section id="usage">
+  <div class="section-label">Usage</div>
+  <h2>Inject. Call. <em>Ship.</em></h2>
+  <p class="section-intro">One bean. All HTTP methods. Blocking and reactive.</p>
+  <div class="code-block">
+    <div class="code-block-header"><span class="code-block-title">UserService.java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="cl">UserService</span> <span class="op">{</span>
+
+    <span class="kw">private final</span> <span class="cl">FastApiClient</span> fastApi<span class="op">;</span>
+
+    <span class="kw">public</span> <span class="cl">UserService</span><span class="op">(</span><span class="cl">FastApiClient</span> fastApi<span class="op">) {</span>
+        <span class="kw">this</span><span class="op">.</span>fastApi <span class="op">=</span> fastApi<span class="op">;</span>
+    <span class="op">}</span>
+
+    <span class="cm">// ── Blocking API (sync) ─────────────────────────</span>
+
+    <span class="kw">public</span> <span class="cl">UserDto</span> <span class="sp">getUser</span><span class="op">(</span><span class="cl">Long</span> id<span class="op">) {</span>
+        <span class="kw">return</span> fastApi<span class="op">.</span><span class="sp">get</span><span class="op">(</span><span class="st">"/users/{id}"</span><span class="op">,</span> <span class="cl">UserDto</span><span class="op">.</span><span class="kw">class</span><span class="op">,</span> id<span class="op">);</span>
+    <span class="op">}</span>
+
+    <span class="kw">public</span> <span class="cl">List</span><span class="op">&lt;</span><span class="cl">UserDto</span><span class="op">&gt;</span> <span class="sp">getAllUsers</span><span class="op">() {</span>
+        <span class="kw">return</span> fastApi<span class="op">.</span><span class="sp">getList</span><span class="op">(</span><span class="st">"/users"</span><span class="op">,</span> <span class="cl">UserDto</span><span class="op">.</span><span class="kw">class</span><span class="op">);</span>
+    <span class="op">}</span>
+
+    <span class="kw">public</span> <span class="cl">UserDto</span> <span class="sp">createUser</span><span class="op">(</span><span class="cl">CreateUserRequest</span> req<span class="op">) {</span>
+        <span class="kw">return</span> fastApi<span class="op">.</span><span class="sp">post</span><span class="op">(</span><span class="st">"/users"</span><span class="op">,</span> req<span class="op">,</span> <span class="cl">UserDto</span><span class="op">.</span><span class="kw">class</span><span class="op">);</span>
+    <span class="op">}</span>
+
+    <span class="kw">public</span> <span class="kw">void</span> <span class="sp">deleteUser</span><span class="op">(</span><span class="cl">Long</span> id<span class="op">) {</span>
+        fastApi<span class="op">.</span><span class="sp">delete</span><span class="op">(</span><span class="st">"/users/{id}"</span><span class="op">,</span> id<span class="op">);</span>
+    <span class="op">}</span>
+
+    <span class="cm">// ── Reactive API (async) ────────────────────────</span>
+
+    <span class="kw">public</span> <span class="fa">Mono</span><span class="op">&lt;</span><span class="cl">UserDto</span><span class="op">&gt;</span> <span class="fa">getUserAsync</span><span class="op">(</span><span class="cl">Long</span> id<span class="op">) {</span>
+        <span class="kw">return</span> fastApi<span class="op">.</span><span class="fa">getAsync</span><span class="op">(</span><span class="st">"/users/{id}"</span><span class="op">,</span> <span class="cl">UserDto</span><span class="op">.</span><span class="kw">class</span><span class="op">,</span> id<span class="op">);</span>
+    <span class="op">}</span>
+<span class="op">}</span></pre>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="performance">
+  <div class="section-label">Performance</div>
+  <h2>Faster, <em>not</em> slower.</h2>
+  <p class="section-intro">A common concern — here's the honest reality. FastBridger adds near-zero overhead, and the reactive client actually improves throughput over RestTemplate.</p>
+  <div class="perf-grid">
+    <div class="perf-cell header">Component</div>
+    <div class="perf-cell header">Overhead</div>
+    <div class="perf-cell header">Why</div>
+
+    <div class="perf-cell" style="text-align:left;font-family:var(--font-head);font-weight:700">CORS Filter</div>
+    <div class="perf-cell"><div class="perf-value" style="color:var(--spring)">~0.01ms</div><div class="perf-label">per request</div></div>
+    <div class="perf-cell" style="font-size:0.85rem;color:var(--text-dim);text-align:left">Just reads and writes HTTP headers. No I/O, no blocking.</div>
+
+    <div class="perf-cell" style="text-align:left;font-family:var(--font-head);font-weight:700">Auto-Configuration</div>
+    <div class="perf-cell"><div class="perf-value" style="color:var(--spring);font-size:1.3rem">Startup only</div></div>
+    <div class="perf-cell" style="font-size:0.85rem;color:var(--text-dim);text-align:left">Runs once at boot. Zero cost per request after that.</div>
+
+    <div class="perf-cell" style="text-align:left;font-family:var(--font-head);font-weight:700">FastApiClient vs RestTemplate</div>
+    <div class="perf-cell"><div class="perf-value" style="color:var(--bridge)">+Faster</div></div>
+    <div class="perf-cell" style="font-size:0.85rem;color:var(--text-dim);text-align:left">Non-blocking WebClient. Threads freed while waiting for Python. Higher throughput under load.</div>
+
+    <div class="perf-cell" style="text-align:left;font-family:var(--font-head);font-weight:700">Health Indicator</div>
+    <div class="perf-cell"><div class="perf-value" style="color:var(--spring);font-size:1.3rem">On-demand</div></div>
+    <div class="perf-cell" style="font-size:0.85rem;color:var(--text-dim);text-align:left">Only fires when Actuator is polled. Invisible to normal traffic.</div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="section-label">FAQ</div>
+  <h2>Common questions.</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Will this slow down my Spring Boot app?<span class="faq-chevron">▼</span></button>
+      <div class="faq-a">No. The CORS filter adds ~0.01ms per request (header reads/writes). Auto-configuration runs only once at startup. The <code>FastApiClient</code> uses a non-blocking <code>WebClient</code> which actually improves throughput over the old blocking <code>RestTemplate</code> because threads are freed while waiting for FastAPI responses.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does it work with Spring Security?<span class="faq-chevron">▼</span></button>
+      <div class="faq-a">Yes. FastBridger registers a <code>CorsConfigurationSource</code> bean you can wire directly into your security config: <code>http.cors(c -> c.configurationSource(corsConfigurationSource))</code>. This ensures CORS headers are applied before Security's filter chain runs.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I disable just CORS or just the FastAPI client?<span class="faq-chevron">▼</span></button>
+      <div class="faq-a">Absolutely. Set <code>fastbridger.cors.enabled: false</code> to manage CORS yourself, or <code>fastbridger.fastapi.enabled: false</code> if you only need the CORS features. Both are independent and conditional.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">My FastAPI uses OAuth2 / JWT. How do I authenticate?<span class="faq-chevron">▼</span></button>
+      <div class="faq-a">Set <code>fastbridger.fastapi.bearer-token</code> in your config and every request will include <code>Authorization: Bearer ...</code> automatically. For per-request tokens, use <code>fastApiClient.rawClient()</code> to add headers manually.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does it support Spring Boot 2.x?<span class="faq-chevron">▼</span></button>
+      <div class="faq-a">FastBridger targets Spring Boot 3.2+ and Java 17+. It uses the new <code>@AutoConfiguration</code> annotation and the Sonatype Central Portal publisher which are Boot 3.x features. A Boot 2.x backport is not planned.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What if I already have a WebClient or ObjectMapper bean?<span class="faq-chevron">▼</span></button>
+      <div class="faq-a">FastBridger uses <code>@ConditionalOnMissingBean</code> on all its beans. If you already define an <code>ObjectMapper</code>, FastBridger's won't be registered. Your existing beans always take precedence.</div>
+    </div>
+  </div>
+</section>
+
+<div class="author-strip">
+  <div class="author-inner">
+    <div class="author-avatar">RC</div>
+    <div class="author-info">
+      <h3>Ramdev G. Calope</h3>
+      <p>Full-stack developer · Spring Boot · AI/LLM · FastAPI</p>
+      <a href="https://linkedin.com/in/ramdevcalope" class="author-link" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        linkedin.com/in/ramdevcalope
+      </a>
+      <a href="https://github.com/ramdev2025" class="author-link" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        ramdev2025
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Ramdev G. Calope — MIT License</span>
+    <span>
+      <a href="https://github.com/ramdev2025/fastbridger-spring-boot-starter">GitHub</a> &nbsp;·&nbsp;
+      <a href="https://linkedin.com/in/ramdevcalope">LinkedIn</a> &nbsp;·&nbsp;
+      <a href="https://github.com/ramdev2025/fastbridger-spring-boot-starter/issues">Issues</a>
+    </span>
+    <span>Spring Boot 3.2+ · Java 17+</span>
+  </div>
+</footer>
+
+<script>
+  function switchTab(e, id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.feature-card, .problem-card, .solution-card, .faq-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(14px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

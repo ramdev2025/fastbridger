@@ -1,0 +1,82 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# FastBridger Configuration Template
+# Copy into your Spring Boot application's application.yml
+# ─────────────────────────────────────────────────────────────────────────────
+
+fastbridger:
+
+  # ─── CORS (JavaScript Frontend) ───────────────────────────────────────────
+  cors:
+    enabled: true
+
+    # Add every URL your JS frontend runs on.
+    # Supports wildcard patterns like "https://*.myapp.com"
+    allowed-origins:
+      - "http://localhost:3000"     # React (CRA / Next.js dev)
+      - "http://localhost:5173"     # Vite (React, Vue, Svelte)
+      - "http://localhost:4200"     # Angular CLI
+      - "https://myapp.com"        # Your production frontend
+
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - OPTIONS
+      - HEAD
+
+    # Use "*" to allow all headers (recommended for development)
+    allowed-headers:
+      - "*"
+
+    # Headers JavaScript can read from the response
+    exposed-headers:
+      - Content-Disposition
+      - X-Total-Count
+      - X-Request-Id
+
+    # Allow cookies / Authorization headers from the browser
+    allow-credentials: true
+
+    # Browser caches preflight for 1 hour (3600 seconds)
+    max-age: 3600
+
+    # Apply CORS to all paths
+    path-patterns:
+      - "/**"
+
+  # ─── FastAPI Backend Client ────────────────────────────────────────────────
+  fastapi:
+    enabled: true
+    base-url: "http://localhost:8000"   # FastAPI service URL
+
+    # Timeouts
+    timeout: 10s
+    connect-timeout: 5s
+    read-timeout: 10s
+
+    # Retry (only for transient connection errors, not 4xx/5xx)
+    max-retries: 3
+    retry-backoff: 200ms
+
+    # Max response buffer (10 MB default)
+    max-in-memory-size: 10485760
+
+    # Authentication (choose one or neither)
+    # bearer-token: "your-jwt-token-here"
+    # api-key: "your-api-key-here"
+
+    # Enable request/response logging (WARNING: may log sensitive data)
+    logging-enabled: false
+
+# ─── Spring Boot Actuator (optional but recommended) ──────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+      # Access FastAPI health at: /actuator/health/fastapi

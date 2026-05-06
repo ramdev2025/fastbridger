@@ -1,0 +1,46 @@
+name: Publish to GitHub Packages
+
+# Alternative to Maven Central — simpler, no GPG needed.
+# Useful for org-internal use or before Maven Central approval.
+# Triggers on the same GitHub Release event.
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  publish:
+    name: Publish to GitHub Packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write   # needed to push to GitHub Packages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+          # Writes settings.xml with 'github' server using GITHUB_TOKEN
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      - name: Set release version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mvn --batch-mode versions:set -DnewVersion="$VERSION" -DgenerateBackupPoms=false
+
+      - name: Build & publish
+        run: |
+          mvn --batch-mode --no-transfer-progress \
+              clean deploy \
+              -P github-packages \
+              -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}

@@ -1,0 +1,49 @@
+# Maven build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE files
+.idea/
+*.iws
+*.iml
+*.ipr
+.project
+.classpath
+.settings/
+*.launch
+.vscode/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+logs/
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# GPG keys (NEVER commit these)
+*.asc
+*.gpg
+secring.gpg
+
+# Maven wrapper (keep the jar, ignore nothing else)
+.mvn/
+
+# Environment / secrets
+.env
+.env.local
+secrets.properties
